@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الديناصور</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+        }
+        #game {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background-color: #e0e0e0;
+            border: 2px solid #333;
+        }
+        #dino {
+            position: absolute;
+            bottom: 0;
+            left: 50px;
+            width: 40px;
+            height: 40px;
+            background-color: #76c7c0;
+            border-radius: 5px;
+        }
+        .cactus {
+            position: absolute;
+            bottom: 0;
+            width: 20px;
+            height: 40px;
+            background-color: #c7b052;
+            animation: move 2s linear infinite;
+        }
+        @keyframes move {
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="score">النقاط: 0</div>
+        <div id="dino"></div>
+    </div>
+
+    <script>
+        const dino = document.getElementById('dino');
+        const game = document.getElementById('game');
+        const scoreElement = document.getElementById('score');
+        let score = 0;
+
+        document.addEventListener('keydown', jump);
+
+        function jump() {
+            if (dino.classList != 'jump') {
+                dino.classList.add('jump');
+                setTimeout(() => {
+                    dino.classList.remove('jump');
+                }, 300);
+            }
+        }
+
+        function createCactus() {
+            const cactus = document.createElement('div');
+            cactus.classList.add('cactus');
+            cactus.style.left = '100%';
+            game.appendChild(cactus);
+
+            let cactusInterval = setInterval(() => {
+                const cactusPosition = parseInt(window.getComputedStyle(cactus).getPropertyValue('left'));
+                if (cactusPosition < 0) {
+                    clearInterval(cactusInterval);
+                    cactus.remove();
+                    score++;
+                    scoreElement.textContent = `النقاط: ${score}`;
+                } else if (cactusPosition > 50 && cactusPosition < 90 && dino.classList.contains('jump')) {
+                    clearInterval(cactusInterval);
+                    alert(`انتهت اللعبة! النقاط: ${score}`);
+                    location.reload();
+                } else {
+                    cactus.style.left = cactusPosition - 5 + 'px';
+                }
+            }, 20);
+        }
+
+        setInterval(createCactus, 2000);
+    </script>
+</body>
+</html>
